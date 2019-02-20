@@ -48,7 +48,7 @@ export default {
 
   methods: {
     logout () {
-      localStorage.removeItem('usertoken')
+      sessionStorage.removeItem('usertoken')
     }
 
   },
