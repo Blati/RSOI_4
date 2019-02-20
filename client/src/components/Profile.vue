@@ -29,7 +29,7 @@ import jwtDecode from 'jwt-decode'
 
 export default {
   data () {
-    const token = localStorage.usertoken
+    const token = sessionStorage.usertoken
     const decoded = jwtDecode(token)
     return {
       first_name: decoded.identity.first_name,

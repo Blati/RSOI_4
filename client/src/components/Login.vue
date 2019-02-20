@@ -40,7 +40,7 @@ export default {
           password: this.password
         }
       ).then((res) => {
-        localStorage.setItem('usertoken', res.data.token)
+        sessionStorage.setItem('usertoken', res.data.token)
         this.email = ''
         this.password = ''
         router.push({ name: 'Profile' })
