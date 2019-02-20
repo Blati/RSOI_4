@@ -7,6 +7,7 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, get_raw_jwt)
 from werkzeug.exceptions import NotFound, ServiceUnavailable
+from datetime import datetime
 import json
 import requests
 from logging import FileHandler, WARNING
@@ -82,7 +83,7 @@ def user_login():
 				'last_name': response['last_name'],
 				'email': response['email']}
 				)
-            result = access_token
+            result = nice_json({"token":access_token})
         else:
             result = nice_json({"error":"Invalid username and password"})            
     else:
