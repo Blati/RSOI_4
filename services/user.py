@@ -2,6 +2,10 @@ from services import root_dir, nice_json
 from flask import Flask
 from flask import request
 from flask_cors import CORS
+from flask_pymongo import PyMongo
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager
+from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, get_raw_jwt)
 from werkzeug.exceptions import NotFound, ServiceUnavailable
 import json
 import requests
@@ -9,12 +13,15 @@ from logging import FileHandler, WARNING
 
 app = Flask(__name__)
 
+app.config['MONGO_DBNAME'] = 'authusers'
+app.config['MONGO_URI'] = 'mongodb://localhost:27017/authusers'
+app.config['JWT_SECRET_KEY'] = 'definetly_not_a_secret_key'
+
+mongo = PyMongo(app)
+bcrypt = Bcrypt(app)
+jwt = JWTManager(app)
+
 CORS(app)
-
-file_handler = FileHandler('logs/user_log.log')
-file_handler.setLevel(WARNING)
-
-app.logger.addHandler(file_handler)
 
 with open("{}/database/users.json".format(root_dir()), "r") as f:
     users = json.load(f)
@@ -26,6 +33,8 @@ def hello():
         "subresource_uris": {
             "users": "/users",
             "user": "/users/<username>",
+			"auth": "/auth/login",
+			"auth_reg": "/auth/register",
             "bookings": "/users/<username>/bookings",
             "bookings_add": "/users/<username>/bookings/add"
         }
@@ -34,6 +43,52 @@ def hello():
 @app.route("/users", methods=['GET'])
 def users_list():
     return nice_json(users)
+
+@app.route("/auth/register", methods=['POST'])
+def user_register():
+    auth = mongo.db.auth
+    first_name = request.get_json()['first_name']
+    last_name = request.get_json()['last_name']
+    email = request.get_json()['email']
+    password = bcrypt.generate_password_hash(request.get_json()['password']).decode('utf-8')
+    created = datetime.utcnow()
+
+    user_id = auth.insert({
+	'first_name' : first_name, 
+	'last_name' : last_name, 
+	'email' : email, 
+	'password' : password, 
+	'created' : created, 
+	})
+    new_user = auth.find_one({'_id' : user_id})
+
+    result = {'result' : {'email' : new_user['email'] + ' registered'}}
+
+    return nice_json(result)
+	
+@app.route("/auth/login", methods=['POST'])
+def user_login():
+    auth = mongo.db.auth
+    email = request.get_json()['email']
+    password = request.get_json()['password']
+    result = ""
+	
+    response = auth.find_one({'email' : email})
+
+    if response:	
+        if bcrypt.check_password_hash(response['password'], password):
+            access_token = create_access_token(identity = {
+			    'first_name': response['first_name'],
+				'last_name': response['last_name'],
+				'email': response['email']}
+				)
+            result = access_token
+        else:
+            result = nice_json({"error":"Invalid username and password"})            
+    else:
+        result = nice_json({"result":"No results found"})
+
+    return result
 	
 @app.route("/users/<username>", methods=['GET'])
 def user_record(username):
