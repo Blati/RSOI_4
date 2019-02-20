@@ -58,33 +58,33 @@ export default {
     };
 	  
 	  axios.post('http://127.0.0.1:5000/users/' + this.$route.params.id + '/bookings/add/' + film_date, json, axiosConfig)
-	}
+    }
   },
   computed: {
     prevpage: function () {
-	  var newStr = this.$route.params.date[0] + this.$route.params.date[1]
-	  var newInt = parseInt(newStr,10) - 1
-	  
-	  if (newInt < 10) { 
- 	    newStr = '0' + newInt + this.$route.params.date[2] + this.$route.params.date[3] + this.$route.params.date[4] + this.$route.params.date[5] + this.$route.params.date[6] + this.$route.params.date[7]
-	  }else {
-	    newStr = newInt + this.$route.params.date[2] + this.$route.params.date[3] + this.$route.params.date[4] + this.$route.params.date[5] + this.$route.params.date[6] + this.$route.params.date[7]
-	  }
-	  
-	  return newStr
-	},
+      var newStr = this.$route.params.date[0] + this.$route.params.date[1]
+      var newInt = parseInt(newStr, 10) - 1
+
+      if (newInt < 10) {
+        newStr = '0' + newInt + this.$route.params.date[2] + this.$route.params.date[3] + this.$route.params.date[4] + this.$route.params.date[5] + this.$route.params.date[6] + this.$route.params.date[7]
+      } else {
+        newStr = newInt + this.$route.params.date[2] + this.$route.params.date[3] + this.$route.params.date[4] + this.$route.params.date[5] + this.$route.params.date[6] + this.$route.params.date[7]
+      }
+
+      return newStr
+    },
     nextpage: function () {
-	  var newStr = this.$route.params.date[0] + this.$route.params.date[1]
-	  var newInt = parseInt(newStr,10) + 1
-	  
-	  if (newInt < 10) { 
- 	    newStr = '0' + newInt + this.$route.params.date[2] + this.$route.params.date[3] + this.$route.params.date[4] + this.$route.params.date[5] + this.$route.params.date[6] + this.$route.params.date[7]
-	  }else {
-	    newStr = newInt + this.$route.params.date[2] + this.$route.params.date[3] + this.$route.params.date[4] + this.$route.params.date[5] + this.$route.params.date[6] + this.$route.params.date[7]
-	  }
-	  
-	  return newStr
-	}	
+      var newStr = this.$route.params.date[0] + this.$route.params.date[1]
+      var newInt = parseInt(newStr, 10) + 1
+
+      if (newInt < 10) {
+        newStr = '0' + newInt + this.$route.params.date[2] + this.$route.params.date[3] + this.$route.params.date[4] + this.$route.params.date[5] + this.$route.params.date[6] + this.$route.params.date[7]
+      } else {
+        newStr = newInt + this.$route.params.date[2] + this.$route.params.date[3] + this.$route.params.date[4] + this.$route.params.date[5] + this.$route.params.date[6] + this.$route.params.date[7]
+      }
+
+      return newStr
+    }
   },
   mounted () {
     axios

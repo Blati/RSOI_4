@@ -83,7 +83,7 @@ def user_login():
 				'last_name': response['last_name'],
 				'email': response['email']}
 				)
-            result = nice_json({"token":access_token})
+            result = access_token
         else:
             result = nice_json({"error":"Invalid username and password"})            
     else:
